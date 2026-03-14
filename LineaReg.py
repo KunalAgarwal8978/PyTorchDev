@@ -83,3 +83,64 @@ for epochs in range(epochs):
 
     print(test_loss, loss)
 print(modelv2.state_dict())
+
+
+
+
+import torch
+
+start=0
+end=1
+step=0.02
+x=torch.arange(start, end, step)
+y=0.7*x+0.3
+
+class linearModel(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.linear1=nn.Linear(in_features=1, out_features=5)
+        self.linear2=nn.Linear(in_features=5, out_features=1)
+
+    def forward(self,x):
+        return self.linear2(self.linear1(x))
+    
+from sklearn.model_selection import train_test_split
+
+x_train, x_test, y_train, y_test= train_test_split(x,y, test_size=0.2)
+
+model=linearModel()
+
+epoch=10
+loss_fn=nn.NLLLoss()
+optimizer=torch.optim.SGD(model.parameters, lr=0.01)
+
+for epoch in range(epoch):
+    model.train()
+    y_pred=model(x_train)
+    loss=loss_fn(y_pred, y_train)
+    loss.backward()
+    optimizer.zero_grad()
+    optimizer.step()
+
+    model.eval()
+    y_test_pred=model(x_test)
+    print(y_test)
+
+print(model.state_dict())
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
